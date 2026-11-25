@@ -15,6 +15,54 @@
   --display: 'Space Grotesk', 'Inter', system-ui, 'PingFang SC', 'Noto Sans SC', sans-serif;
   --radius: 18px;
   --container: 1200px;
+  --surface-1: var(--surface-1);
+  --surface-2: var(--surface-2);
+  --surface-3: var(--surface-3);
+  --surface-4: rgba(255, 255, 255, 0.04);
+  --nav-bg: rgba(6, 8, 11, 0.78);
+  --nav-solid: rgba(6, 8, 11, 0.97);
+  --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --glow-a: rgba(100, 240, 182, 0.07);
+  --glow-b: rgba(106, 168, 255, 0.055);
+  --sel-text: #ffffff;
+  --btn-on-mint: #04120c;
+}
+
+:root[data-theme='light'] {
+  --bg: #f6f8f7;
+  --panel: #ffffff;
+  --line: rgba(16, 40, 34, 0.12);
+  --line-strong: rgba(16, 40, 34, 0.2);
+  --text: #101b17;
+  --muted: #566661;
+  --faint: #899792;
+  --mint: #0e9a70;
+  --mint-dim: rgba(14, 154, 112, 0.12);
+  --blue: #2563eb;
+  --amber: #b45309;
+  --surface-1: rgba(12, 40, 32, 0.03);
+  --surface-2: rgba(12, 40, 32, 0.05);
+  --surface-3: rgba(12, 40, 32, 0.08);
+  --surface-4: rgba(12, 40, 32, 0.1);
+  --nav-bg: rgba(246, 248, 247, 0.82);
+  --nav-solid: rgba(246, 248, 247, 0.98);
+  --shadow-lg: 0 30px 80px rgba(16, 40, 34, 0.14);
+  --glow-a: rgba(14, 154, 112, 0.09);
+  --glow-b: rgba(37, 99, 235, 0.06);
+  --sel-text: #06231a;
+  --btn-on-mint: #ffffff;
+}
+
+/* 终端在浅色主题下保持深色，仅覆盖内部文字与描边 */
+:root[data-theme='light'] .terminal {
+  --text: #e9eff3;
+  --muted: #91a1ac;
+  --faint: #5e6e7a;
+  --mint: #64f0b6;
+  --blue: #6aa8ff;
+  --amber: #ffc46b;
+  --line: rgba(146, 178, 198, 0.13);
+  --line-strong: rgba(146, 178, 198, 0.22);
 }
 
 * {
@@ -29,6 +77,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  transition: background-color 0.2s ease, color 0.2s ease;
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
@@ -43,13 +92,13 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(900px 620px at 82% -12%, rgba(100, 240, 182, 0.07), transparent 62%),
-    radial-gradient(760px 540px at -8% 8%, rgba(106, 168, 255, 0.055), transparent 62%);
+    radial-gradient(900px 620px at 82% -12%, var(--glow-a), transparent 62%),
+    radial-gradient(760px 540px at -8% 8%, var(--glow-b), transparent 62%);
 }
 
 ::selection {
   background: rgba(100, 240, 182, 0.28);
-  color: #fff;
+  color: var(--sel-text);
 }
 
 a {
@@ -85,7 +134,7 @@ img {
   top: -56px;
   z-index: 100;
   background: var(--mint);
-  color: #04120c;
+  color: var(--btn-on-mint);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 13px;
@@ -126,7 +175,7 @@ img {
 
 .btn-primary {
   background: var(--mint);
-  color: #04120c;
+  color: var(--btn-on-mint);
   box-shadow: 0 6px 24px rgba(100, 240, 182, 0.18);
 }
 
@@ -138,7 +187,7 @@ img {
 .btn-ghost {
   border-color: var(--line-strong);
   color: var(--text);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-2);
 }
 
 .btn-ghost:hover {
@@ -156,7 +205,7 @@ img {
 }
 
 .nav.is-scrolled {
-  background: rgba(6, 8, 11, 0.78);
+  background: var(--nav-bg);
   backdrop-filter: blur(14px);
   border-bottom-color: var(--line);
 }
@@ -166,6 +215,28 @@ img {
   align-items: center;
   gap: 32px;
   height: 68px;
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--mint);
+  border-color: var(--mint);
+  background: var(--mint-dim);
 }
 
 .brand {
@@ -297,7 +368,7 @@ img {
   display: none;
   flex-direction: column;
   padding: 6px 24px 18px;
-  background: rgba(6, 8, 11, 0.97);
+  background: var(--nav-solid);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(14px);
 }
@@ -431,7 +502,7 @@ img {
   border-radius: 14px;
   overflow: hidden;
   font-family: var(--mono);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--surface-4);
 }
 
 .terminal-bar {
@@ -440,7 +511,7 @@ img {
   gap: 7px;
   padding: 12px 14px;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-2);
 }
 
 .dot {
@@ -668,7 +739,7 @@ img {
 .stats-band {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.012);
+  background: var(--surface-1);
 }
 
 .stats-inner {
@@ -774,7 +845,7 @@ img {
   grid-column: span 12;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008));
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-1));
   overflow: hidden;
   transition: border-color 0.25s ease, transform 0.25s ease;
 }
@@ -1029,7 +1100,7 @@ img {
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--surface-1);
 }
 
 .media-kind {
@@ -1078,7 +1149,7 @@ img {
 .explorer {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.012);
+  background: var(--surface-1);
   overflow: hidden;
 }
 
@@ -1113,12 +1184,12 @@ img {
 
 .tab:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-3);
 }
 
 .tab.is-active {
   background: var(--mint);
-  color: #04120c;
+  color: var(--btn-on-mint);
 }
 
 .tab-count {
@@ -1510,7 +1581,7 @@ img {
   padding: clamp(20px, 2.4vw, 28px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.012);
+  background: var(--surface-1);
 }
 
 .chart-head {
@@ -1755,7 +1826,7 @@ img {
   padding: clamp(20px, 2.4vw, 26px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.012);
+  background: var(--surface-1);
 }
 
 .sources h3 {
@@ -1863,7 +1934,7 @@ img {
   justify-content: space-between;
   padding: 9px 14px;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-2);
   font: 500 10px/1 var(--mono);
   letter-spacing: 0.08em;
   color: var(--faint);

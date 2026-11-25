@@ -9,6 +9,24 @@
       content="持续抓取并归一化 GPU 裸金属、卡时租赁、文本推理、图像与视频生成 API 的价格，一处查询、对比与接入。"
     />
     <meta name="theme-color" content="#06080b" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('ae-theme');
+          var theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.dataset.theme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f8f7' : '#06080b');
+        } catch (error) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
     <meta property="og:title" content="agent everything · AI 算力与模型 API 价格情报" />
     <meta
       property="og:description"

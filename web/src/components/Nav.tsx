@@ -12,6 +12,17 @@ const LINKS = [
 export function Nav({ live }: { live: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() =>
+    document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
+  );
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('ae-theme', theme);
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'light' ? '#f6f8f7' : '#06080b');
+  }, [theme]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 6);
@@ -39,6 +50,15 @@ export function Nav({ live }: { live: boolean }) {
         </nav>
 
         <div className="nav-right">
+          <button
+            type="button"
+            className="theme-toggle"
+            aria-label={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'}
+            title={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'}
+            onClick={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
+          >
+            <span aria-hidden="true">{theme === 'dark' ? '☀' : '☾'}</span>
+          </button>
           <span
             className={`live-pill${live ? ' is-live' : ''}`}
             title={live ? '已连接实时数据 API' : '当前使用内置数据快照'}
