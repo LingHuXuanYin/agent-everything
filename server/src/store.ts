@@ -31,16 +31,28 @@ function resolveDataFile(): string {
 }
 
 const dataFile = resolveDataFile();
-const data = JSON.parse(fs.readFileSync(dataFile, 'utf8')) as Snapshot;
+
+let cached: { mtimeMs: number; size: number; data: Snapshot } | null = null;
+
+function loadSnapshot(): Snapshot {
+  const stat = fs.statSync(dataFile);
+  if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+    return cached.data;
+  }
+  const data = JSON.parse(fs.readFileSync(dataFile, 'utf8')) as Snapshot;
+  cached = { mtimeMs: stat.mtimeMs, size: stat.size, data };
+  return data;
+}
 
 type AnyRow = { id?: unknown };
 type RowBag = Record<string, AnyRow[]>;
 
 export function getSnapshot(): Snapshot {
-  return data;
+  return loadSnapshot();
 }
 
 export function getOverview(): Overview {
+  const data = loadSnapshot();
   const counts: Overview['counts'] = {
     'gpu-baremetal': data.gpuBaremetal.length,
     'gpu-hourly': data.gpuHourly.length,
@@ -73,6 +85,7 @@ export interface QueryOptions {
 }
 
 export function queryCategory(category: Category, options: QueryOptions = {}) {
+  const data = loadSnapshot();
   const key = CATEGORY_KEYS[category];
   let rows = [...(data as unknown as RowBag)[key]];
 
@@ -95,6 +108,7 @@ export function queryCategory(category: Category, options: QueryOptions = {}) {
 }
 
 export function upsertRows(category: Category, rows: unknown[]) {
+  const data = loadSnapshot();
   const key = CATEGORY_KEYS[category];
   const bag = data as unknown as RowBag;
   const current = bag[key] ?? [];
@@ -114,14 +128,15 @@ export function upsertRows(category: Category, rows: unknown[]) {
   }
 
   bag[key] = Array.from(map.values());
-  persist();
+  persist(data);
 
   return { category, applied, total: bag[key].length };
 }
 
-function persist() {
+function persist(snapshot: Snapshot) {
   try {
-    fs.writeFileSync(dataFile, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
+    fs.writeFileSync(dataFile, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
+    cached = null;
   } catch (error) {
     console.warn('[store] 快照写入失败（可能为只读文件系统）:', error);
   }

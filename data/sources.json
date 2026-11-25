@@ -2,7 +2,7 @@
   "meta": {
     "name": "agent-everything 数据源注册表",
     "version": "0.2.1",
-    "updatedAt": "2026-11-25T22:45:00+08:00",
+    "updatedAt": "2026-11-25T19:20:00+08:00",
     "description": "全网 AI 算力与模型 API 价格的数据源清单。每个来源按价格维度登记抓取入口，供采集管道读取；抓取结果归一化后写入 data/snapshot.json。",
     "snapshotFile": "data/snapshot.json",
     "note": "coverage=true 表示该来源已知覆盖该维度；targets 中 status=verified 的 URL 为已人工核验并已入库的抓取入口，status=pending 表示待确认入口或需登录/JS 渲染。"
