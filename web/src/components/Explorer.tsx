@@ -347,7 +347,7 @@ export function Explorer({
 }) {
   const [query, setQuery] = useState('');
   const [providerFilter, setProviderFilter] = useState('all');
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>('CNY');
   const [sort, setSort] = useState<SortState>({ key: 'perGpu', dir: 'asc' });
 
   const gpuModels = useMemo(
@@ -460,7 +460,7 @@ export function Explorer({
             </label>
 
             <div className="currency-toggle" role="group" aria-label="显示币种">
-              {(['USD', 'CNY'] as Currency[]).map((item) => (
+              {(['CNY', 'USD'] as Currency[]).map((item) => (
                 <button
                   key={item}
                   type="button"

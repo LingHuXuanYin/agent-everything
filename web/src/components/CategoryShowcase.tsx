@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Category, MediaModelOffer, Snapshot, TextModelOffer } from '../types';
-import { formatMoney, formatNumber, toUsd, unitSuffix } from '../lib/format';
+import { formatMoney, toUsd, unitSuffix } from '../lib/format';
 import { SectionHead } from './Bits';
 
 export function CategoryShowcase({
@@ -11,6 +11,7 @@ export function CategoryShowcase({
   onSelect: (category: Category) => void;
 }) {
   const rates = data.meta.rates;
+  const cny = (usd: number) => formatMoney(usd, 'USD', 'CNY', rates);
   const providers = useMemo(
     () => new Map(data.providers.map((provider) => [provider.id, provider])),
     [data.providers],
@@ -116,7 +117,7 @@ export function CategoryShowcase({
                     </span>
                     <span className="mini-name">{row.product}</span>
                     <span className="mini-price">
-                      {formatMoney(row.price / row.gpuCount, row.currency, 'USD', rates)}
+                      {formatMoney(row.price / row.gpuCount, row.currency, 'CNY', rates)}
                       <small>/卡·月</small>
                     </span>
                   </div>
@@ -155,7 +156,7 @@ export function CategoryShowcase({
                       />
                     </span>
                     <span className="cat-range-val">
-                      ${formatNumber(group.min)}–${formatNumber(group.max)}
+                      {cny(group.min)}–{cny(group.max)}
                     </span>
                   </div>
                 ))}
@@ -200,8 +201,8 @@ export function CategoryShowcase({
                         />
                       </div>
                       <div className="pair-vals">
-                        <span>in ${formatNumber(input)}</span>
-                        <span>out ${formatNumber(output)}</span>
+                        <span>in {cny(input)}</span>
+                        <span>out {cny(output)}</span>
                       </div>
                     </div>
                   );
@@ -225,14 +226,14 @@ export function CategoryShowcase({
                 <span className="cat-chip">Image / Video</span>
               </div>
               <h3>图像 · 视频生成</h3>
-              <p className="cat-desc">按张、按秒与月费套餐，生成成本一目了然。</p>
+              <p className="cat-desc">按张、按秒与月费套餐。</p>
               <div className="media-chips">
                 {mediaPicks.map((model) => (
                   <div className={`media-chip media-${model.kind}`} key={model.id}>
                     <span className="media-kind">{model.kind === 'image' ? 'IMG' : 'VID'}</span>
                     <b>{model.model}</b>
                     <span className="media-price">
-                      {formatMoney(model.price, model.currency, 'USD', rates)}
+                      {formatMoney(model.price, model.currency, 'CNY', rates)}
                       {unitSuffix(model.unit)}
                     </span>
                     <small>{model.resolution}</small>

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Snapshot } from '../types';
-import { formatNumber, formatPercent, relativeTime, toUsd } from '../lib/format';
+import { formatMoney, formatPercent, relativeTime, toUsd } from '../lib/format';
 
 export function Hero({ data }: { data: Snapshot }) {
   const providers = useMemo(
@@ -92,7 +92,7 @@ export function Hero({ data }: { data: Snapshot }) {
             <div className="terminal-head">
               <span>provider</span>
               <span>gpu</span>
-              <span>$/hr</span>
+              <span>¥/hr</span>
               <span>Δ</span>
             </div>
             {terminalRows.map((row) => {
@@ -107,7 +107,7 @@ export function Hero({ data }: { data: Snapshot }) {
                     {providers.get(row.providerId)?.short ?? row.providerId}
                   </span>
                   <span className="t-gpu">{row.gpu}</span>
-                  <span className="t-price">${formatNumber(price)}</span>
+                  <span className="t-price">{formatMoney(price, 'USD', 'CNY', data.meta.rates)}</span>
                   <span
                     className={`t-delta${delta === undefined ? ' is-flat' : delta > 0 ? ' is-up' : ' is-down'}`}
                   >
@@ -143,10 +143,10 @@ export function Hero({ data }: { data: Snapshot }) {
                     <span className="ticker-prov">{change.provider}</span>
                     <b>{change.gpu}</b>
                     <s>
-                      ${formatNumber(toUsd(change.prev, change.currency, data.meta.rates))}
+                      {formatMoney(toUsd(change.prev, change.currency, data.meta.rates), 'USD', 'CNY', data.meta.rates)}
                     </s>
                     <em>
-                      ${formatNumber(toUsd(change.price, change.currency, data.meta.rates))}
+                      {formatMoney(toUsd(change.price, change.currency, data.meta.rates), 'USD', 'CNY', data.meta.rates)}
                     </em>
                     <span className={ratio > 0 ? 'up' : 'down'}>
                       {formatPercent(ratio).replace('-', '')}

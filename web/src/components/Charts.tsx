@@ -88,7 +88,7 @@ function RangeChart({
 
 export function Charts({ data }: { data: Snapshot }) {
   const rates = data.meta.rates;
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>('CNY');
   const money = (usdValue: number) => formatMoney(usdValue, 'USD', currency, rates);
   const providers = useMemo(
     () => new Map(data.providers.map((provider) => [provider.id, provider])),
@@ -164,7 +164,7 @@ export function Charts({ data }: { data: Snapshot }) {
 
         <div className="charts-toolbar">
           <div className="currency-toggle" role="group" aria-label="图表显示币种">
-            {(['USD', 'CNY'] as Currency[]).map((item) => (
+            {(['CNY', 'USD'] as Currency[]).map((item) => (
               <button
                 key={item}
                 type="button"
