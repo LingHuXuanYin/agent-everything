@@ -39,6 +39,7 @@ agent-everything/
 │       ├── components/        # Hero / 分类卡 / 价格浏览器 / 图表 / 方法论 / API
 │       └── data/snapshot.ts   # 内置快照回退
 ├── docker-compose.yml         # web(10001) + api(10002)
+├── build.sh / run.sh          # 部署构建与启动脚本
 └── package.json               # npm workspaces
 ```
 
@@ -67,6 +68,24 @@ npm run dev:server
 npm run build          # 构建 web + server
 npm run typecheck      # 类型检查
 npm start              # 运行编译后的 API
+```
+
+## 部署
+
+仓库根目录的 `build.sh` / `run.sh` 是部署适配脚本，部署平台直接复用，不再依赖临时脚本：
+
+- `build.sh`：`npm ci`（官方源）→ `npm run build` → prune → 组装 `dist/`（server + web/dist + data + 生产 node_modules）
+- `run.sh`：在 `dist/` 内以单进程启动，监听 `PORT`（默认 8000），同时托管站点与 `/api`
+
+产物结构：
+
+```
+dist/
+├── server/index.js     # Fastify 入口
+├── web/dist/           # 前端构建产物
+├── data/snapshot.json  # 价格快照
+├── node_modules/       # 生产依赖
+└── run.sh
 ```
 
 ## 数据源
