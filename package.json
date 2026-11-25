@@ -15,10 +15,13 @@
     "start": "npm run start --workspace=server",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "crawl": "node scripts/refresh-prices.mjs",
-    "crawl:check": "node scripts/refresh-prices.mjs --dry-run"
+    "crawl:check": "node scripts/refresh-prices.mjs --dry-run",
+    "crawl:render": "node scripts/refresh-rendered.mjs",
+    "capture": "node scripts/render-capture.mjs"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "playwright": "^1.65.1"
   },
   "engines": {
     "node": ">=20.0.0"

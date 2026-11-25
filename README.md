@@ -108,13 +108,23 @@ dist/
 ### 每日自动更新
 
 ```bash
-npm run crawl:check   # 只抓取并打印差异，不写文件
-npm run crawl         # 抓取并写回 data/snapshot.json
+npm run crawl:check    # 静态源：只抓取并打印差异，不写文件
+npm run crawl          # 静态源：抓取并写回 data/snapshot.json
+npm run crawl:render   # 渲染源：极智算裸金属 + 共绩卡时，写回快照
+npm run capture        # 渲染源：把其余页面文本抓到 data/rendered/ 供核对
 ```
 
-- 可静态解析的来源：猿界算力（高性能 / 推理两页）、算力圈首页，按机型匹配现有记录并更新月租；
-- 前端渲染来源（极智算、共绩、阿里云、腾讯云、百度智能云）需渲染后核对，使用 `node scripts/refresh-prices.mjs --set <row-id>=<价格>` 写入；
+- 静态解析：猿界算力（高性能 / 推理两页）、算力圈首页，按机型匹配现有记录并更新月租；
+- 渲染解析（Playwright + Chromium）：极智算 GPU 裸金属 16 台、共绩算力 22 个卡时价，按机型 + 区域 / 显存映射；
+- 其余页面（极智算卡时与模型 token、阿里云、腾讯云、百度智能云）由 `npm run capture` 输出文本，核对后用 `node scripts/refresh-prices.mjs --set <row-id>=<价格>` 写入；
 - 单次变动超过 30% 会被跳过，确认无误后加 `--force`；每次写入同步更新 `meta.snapshotAt`。
+
+首次使用渲染抓取需安装浏览器：
+
+```bash
+npm i -D playwright
+npx playwright install chromium && npx playwright install-deps chromium
+```
 
 ### 欢迎补充数据源
 

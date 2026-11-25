@@ -5,6 +5,8 @@
 set -eu
 
 export NPM_CONFIG_REGISTRY='https://registry.npmjs.org/'
+# 抓取用的浏览器只在本机运行，构建环境不要下载 Chromium
+export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD='1'
 npm ci --registry='https://registry.npmjs.org/'
 npm run build
 npm prune --omit=dev
