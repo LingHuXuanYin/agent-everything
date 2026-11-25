@@ -1,11 +1,11 @@
 {
   "meta": {
     "name": "agent-everything 数据源注册表",
-    "version": "0.1.0",
-    "updatedAt": "2026-11-25T21:10:00+08:00",
+    "version": "0.2.0",
+    "updatedAt": "2026-11-25T22:10:00+08:00",
     "description": "全网 AI 算力与模型 API 价格的数据源清单。每个来源按价格维度登记抓取入口，供采集管道读取；抓取结果归一化后写入 data/snapshot.json。",
     "snapshotFile": "data/snapshot.json",
-    "note": "coverage=true 表示该来源已知覆盖该维度；targets 中 status=verified 的 URL 为已人工核验可用的抓取入口，status=pending 表示待确认入口或需登录/JS 渲染。"
+    "note": "coverage=true 表示该来源已知覆盖该维度；targets 中 status=verified 的 URL 为已人工核验并已入库的抓取入口，status=pending 表示待确认入口或需登录/JS 渲染。"
   },
   "dimensions": [
     {
@@ -63,7 +63,7 @@
         "gpu-baremetal": true,
         "gpu-hourly": true,
         "text-api": true,
-        "media-api": false,
+        "media-api": true,
         "plans": false
       },
       "targets": [
@@ -72,21 +72,28 @@
           "url": "https://www.jygpu.com/markets/bms",
           "format": "html",
           "status": "verified",
-          "notes": "整机月租列表，服务端渲染；页面字段含 GPU 型号/显存、8卡/机、区域、预估单价 ¥/月/台 与划线原价。已验证 16 条。"
+          "notes": "整机月租列表，服务端渲染；字段含 GPU 型号/显存、8卡/机、区域、预估单价 ¥/月/台 与划线原价。已入库 16 条。"
         },
         {
           "dimension": "gpu-hourly",
           "url": "https://www.jygpu.com/markets",
           "format": "html",
           "status": "verified",
-          "notes": "GPU 容器实例（按卡时）列表，与裸金属页同站，可复用解析器。"
+          "notes": "GPU 容器实例按量计费，卡片含按量单价 ¥/时、包天、包月、剩余卡数与「已租完」状态。已入库 11 条，按单卡归一化。"
         },
         {
           "dimension": "text-api",
-          "url": null,
-          "format": null,
+          "url": "https://www.jygpu.com/models",
+          "format": "html",
+          "status": "verified",
+          "notes": "模型广场，聚合 9 家厂商 41 个模型；每个模型给出输入/输出/缓存命中 ¥/M tokens，需分页抓取。已入库 12 条文本模型。"
+        },
+        {
+          "dimension": "media-api",
+          "url": "https://www.jygpu.com/models",
+          "format": "html",
           "status": "pending",
-          "notes": "站点导航标注有模型 API 能力，具体价目入口待确认。"
+          "notes": "同页含图片生成 3 个、视频生成 10 个模型（如 Doubao-Seedream-5.0-pro 按 ￥0.3/张、Seedance 按分辨率分档），接入时按 mediaModels 归一化。"
         }
       ],
       "crawl": {
@@ -103,7 +110,7 @@
       "region": "CN",
       "coverage": {
         "gpu-baremetal": true,
-        "gpu-hourly": true,
+        "gpu-hourly": false,
         "text-api": false,
         "media-api": false,
         "plans": false
@@ -114,14 +121,14 @@
           "url": "https://www.suanliquan.com/",
           "format": "html",
           "status": "verified",
-          "notes": "首页「GPU 物理服务器」区块给出 8 卡整机预估价 ¥/月/台（4090 ¥9000、5090 ¥16500、H20 141G ¥56000），页面注明「以实际交易价为准」。"
+          "notes": "首页「GPU 物理服务器」区块给出 8 卡整机预估价 ¥/月/台（4090 ¥9000、5090 ¥16500、H20 141G ¥56000），页面注明「以实际交易价为准」。已入库 3 条。"
         },
         {
           "dimension": "gpu-hourly",
           "url": "https://www.suanliquan.com/gpu.html",
           "format": "html",
-          "status": "verified",
-          "notes": "GPU 云服务器按卡月预估价（3090 ¥1300、4090 ¥1800、5090 ¥2500、910B ¥12000 元/月/卡），需按卡数折算到卡时。"
+          "status": "pending",
+          "notes": "该页为云 GPU 按卡月预估价（3090 ¥1300、4090 ¥1800、5090 ¥2500、910B ¥12000 元/月/卡），非卡时报价；如需卡时必须除以 730 并标注为折算价，暂不入库。"
         }
       ],
       "crawl": {
@@ -149,7 +156,7 @@
           "url": "https://www.suanli8.com/home/compute_resource/index.html",
           "format": "html",
           "status": "verified",
-          "notes": "算力超市8（猿界算力旗下）在售整机列表，字段含 GPU 型号/卡数、CPU、内存、库存、¥/月；详情页 /home/ComputeResource/detail.html?goods_id=xxx。"
+          "notes": "算力超市8（猿界算力旗下）在售整机列表，字段含 GPU 型号/卡数、CPU、内存、库存、¥/月；详情页 /home/ComputeResource/detail.html?goods_id=xxx。已入库 7 条。"
         },
         {
           "dimension": "gpu-baremetal",
@@ -175,7 +182,7 @@
     {
       "id": "gongji",
       "name": "共绩算力",
-      "providerId": null,
+      "providerId": "gongji",
       "homepage": "https://suanli.cn",
       "region": "CN",
       "coverage": {
@@ -190,14 +197,28 @@
           "dimension": "gpu-baremetal",
           "url": "https://suanli.cn/price/",
           "format": "html",
-          "status": "pending",
-          "notes": "共绩算力价格页，裸金属/卡时/模型三类价格集中，需核验页面结构后接入；首次接入时在 snapshot.providers 中新增 providerId。"
+          "status": "verified",
+          "notes": "「裸金属算力价格」表：8 卡整机的小时/24 小时/7 天/30 天时长包价格，取 30 天时长包作为月租。已入库 11 条。"
+        },
+        {
+          "dimension": "gpu-hourly",
+          "url": "https://suanli.cn/price/",
+          "format": "html",
+          "status": "verified",
+          "notes": "「弹性服务部署算力价格」表：22 种卡型 ¥/小时，按秒收费；同页另有 Job 批处理的按量与抢占价。已入库 22 条。"
+        },
+        {
+          "dimension": "text-api",
+          "url": "https://suanli.cn/price/",
+          "format": "html",
+          "status": "verified",
+          "notes": "「大模型云服务价格」表：模型名、供应商、输入/输出/输入缓存 ¥/M tokens，纯按量计费。已入库 7 条。"
         }
       ],
       "crawl": {
         "enabled": true,
         "frequency": "daily",
-        "priority": 2
+        "priority": 1
       }
     },
     {
@@ -219,14 +240,14 @@
           "url": "https://www.aliyun.com/price/ecs/ecs-pricing/zh",
           "format": "html",
           "status": "verified",
-          "notes": "ECS 价格详情页，筛选「弹性祼金属服务器」；列含按量目录价、包月目录价、包月折扣价。已验证 ecs.ebmgn8is.32xlarge（H20 8卡，华北2）包月目录价 ¥55347.14。"
+          "notes": "ECS 价格详情页，筛选「弹性祼金属服务器」；列含按量目录价、包月目录价、包月折扣价。已入库 ecs.ebmgn8is.32xlarge（H20 8卡，华北2）包月目录价 ¥55347.14。"
         },
         {
           "dimension": "gpu-hourly",
           "url": "https://www.aliyun.com/price/ecs/ecs-pricing/zh",
           "format": "html",
           "status": "pending",
-          "notes": "同页筛选 GPU 云服务器可得到按量小时价；需处理地域切换参数。"
+          "notes": "同页筛选 GPU 云服务器可得按量小时价；需处理地域切换参数与前端渲染。"
         },
         {
           "dimension": "text-api",
@@ -256,19 +277,40 @@
       "homepage": "https://cloud.tencent.com",
       "region": "CN",
       "coverage": {
-        "gpu-baremetal": false,
-        "gpu-hourly": false,
+        "gpu-baremetal": true,
+        "gpu-hourly": true,
         "text-api": false,
         "media-api": false,
         "plans": false
       },
-      "targets": [],
+      "targets": [
+        {
+          "dimension": "gpu-baremetal",
+          "url": "https://cloud.tencent.com/product/gpu/",
+          "format": "html",
+          "status": "verified",
+          "notes": "GPU 云服务器产品页规格推荐卡直接标价：GN10Xp（8×V100 NVLink 32G，80 核 / 320GB）￥46000/月，上海。已入库 1 条。"
+        },
+        {
+          "dimension": "gpu-hourly",
+          "url": "https://cloud.tencent.com/document/product/851/74108",
+          "format": "html",
+          "status": "verified",
+          "notes": "TI-ONE 计费概述表：型号、GPU 资源规格、CPU 规格、刊例价（元/小时，按秒计费）。已入库 TI.GN10X.2XLARGE40.POST（V100×1，8c40g）¥19.84/卡时。"
+        },
+        {
+          "dimension": "gpu-hourly",
+          "url": "https://cloud.tencent.com/document/product/213/2176",
+          "format": "html",
+          "status": "pending",
+          "notes": "CVM 价格总览仅给折扣规则，具体实例价需价格计算器（前端渲染），暂不入库。"
+        }
+      ],
       "crawl": {
-        "enabled": false,
+        "enabled": true,
         "frequency": "daily",
-        "priority": 3
-      },
-      "notes": "待登记：GPU 裸金属/卡时与混元 API 价目入口。"
+        "priority": 2
+      }
     },
     {
       "id": "baidu",
@@ -278,39 +320,68 @@
       "region": "CN",
       "coverage": {
         "gpu-baremetal": false,
-        "gpu-hourly": false,
+        "gpu-hourly": true,
         "text-api": false,
         "media-api": false,
         "plans": false
       },
-      "targets": [],
+      "targets": [
+        {
+          "dimension": "gpu-hourly",
+          "url": "https://cloud.baidu.com/product-price/gpu.html",
+          "format": "html",
+          "status": "verified",
+          "notes": "GPU 云服务器官方价目表，按机型给出后付费（元/小时）与预付费（元/月、1/2/3 年折扣）。整机价除以卡数归一化为卡时价。已入库 A100-80G ¥30.18、A100-40G ¥26.08、A10 ¥11.05、V100-32G ¥15.52（均元/卡时）。"
+        },
+        {
+          "dimension": "gpu-baremetal",
+          "url": "https://cloud.baidu.com/product-price/bbc.html",
+          "format": "html",
+          "status": "pending",
+          "notes": "弹性裸金属服务器价目页，待核验是否有 GPU 机型后接入。"
+        },
+        {
+          "dimension": "text-api",
+          "url": null,
+          "format": null,
+          "status": "pending",
+          "notes": "文心/千帆模型计费页入口待确认。"
+        }
+      ],
       "crawl": {
-        "enabled": false,
+        "enabled": true,
         "frequency": "daily",
-        "priority": 3
-      },
-      "notes": "待登记：GPU 物理机/卡时与文心 API 价目入口。"
+        "priority": 2
+      }
     },
     {
       "id": "jiyun",
       "name": "极云科技",
-      "providerId": null,
-      "homepage": null,
+      "providerId": "jygpu",
+      "homepage": "https://www.jygpu.com",
       "region": "CN",
       "coverage": {
-        "gpu-baremetal": false,
-        "gpu-hourly": false,
-        "text-api": false,
-        "media-api": false,
+        "gpu-baremetal": true,
+        "gpu-hourly": true,
+        "text-api": true,
+        "media-api": true,
         "plans": false
       },
-      "targets": [],
+      "targets": [
+        {
+          "dimension": "gpu-baremetal",
+          "url": "https://www.jygpu.com/markets/bms",
+          "format": "html",
+          "status": "verified",
+          "notes": "极云科技（成都极云天下科技有限公司）是极智算平台的运营公司，官网 aboutus 已确认；价格与 providerId=jygpu 合并，不重复入库。"
+        }
+      ],
       "crawl": {
         "enabled": false,
         "frequency": "daily",
         "priority": 3
       },
-      "notes": "待确认官网域名与价目页；确认后在 snapshot.providers 新增 providerId。"
+      "notes": "别名来源：极云科技 = 极智算运营方（成立于 2016 年，总部成都天府软件园）。数据统一记在 jygpu 名下，避免重复计数。"
     }
   ]
 }

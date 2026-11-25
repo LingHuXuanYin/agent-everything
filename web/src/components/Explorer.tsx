@@ -204,7 +204,7 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
           cells: {
             model: <span className="cell-strong">{row.model}</span>,
             provider: providerNode(row.providerId),
-            context: <span className="mono">{row.contextK}K</span>,
+            context: <span className="mono">{row.contextK ? `${row.contextK}K` : '—'}</span>,
             input: (
               <span className="num-main">
                 {money(row.inputPerM, row.currency)}
