@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "0.1.0",
-    "snapshotAt": "2026-11-25T19:55:36+08:00",
+    "snapshotAt": "2026-11-25T21:14:25+08:00",
     "rates": {
       "USD": 1,
       "CNY": 7.2
@@ -808,6 +808,20 @@
       "minTerm": "按月租",
       "availability": "available",
       "sourceUrl": "https://apetops.com/tongyongsuanli/"
+    },
+    {
+      "id": "bm-slq-pro6000-96",
+      "providerId": "suanliquan",
+      "product": "PRO 6000 96GB 8卡整机",
+      "gpu": "RTX PRO 6000",
+      "gpuCount": 8,
+      "vramGb": 96,
+      "price": 55000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/"
     },
     {
       "id": "bm-slq-h20-141",

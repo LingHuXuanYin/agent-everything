@@ -76,6 +76,7 @@ const YUANJIE_RULES = [
 ];
 
 const SUANLIQUAN_RULES = [
+  [/Pro6000/i, 'bm-slq-pro6000-96'],
   [/4090/, 'bm-slq-4090'],
   [/5090/, 'bm-slq-5090'],
   [/H20/, 'bm-slq-h20-141'],
