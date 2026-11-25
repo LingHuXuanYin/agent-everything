@@ -105,6 +105,17 @@ dist/
 
 裸金属取整机月租，卡时按单卡归一化，token 价按 1M tokens 记。`sources.json` 中 `status=verified` 表示该入口已人工核验并能解析出价格，`pending` 表示入口待确认或需登录 / 前端渲染。
 
+### 每日自动更新
+
+```bash
+npm run crawl:check   # 只抓取并打印差异，不写文件
+npm run crawl         # 抓取并写回 data/snapshot.json
+```
+
+- 可静态解析的来源：猿界算力（高性能 / 推理两页）、算力圈首页，按机型匹配现有记录并更新月租；
+- 前端渲染来源（极智算、共绩、阿里云、腾讯云、百度智能云）需渲染后核对，使用 `node scripts/refresh-prices.mjs --set <row-id>=<价格>` 写入；
+- 单次变动超过 30% 会被跳过，确认无误后加 `--force`；每次写入同步更新 `meta.snapshotAt`。
+
 ### 欢迎补充数据源
 
 这是一个开放的比价项目，欢迎通过 PR 补充新的供应商或价格入口：
@@ -153,6 +164,18 @@ docker compose up -d --build
 - API：http://localhost:10002/api/overview
 
 生产环境请修改 `docker-compose.yml` 中的 `INGEST_TOKEN`。
+
+## 数据持久化
+
+部署环境是单进程 FunctionWeb，**实例本地文件系统不持久**：写入 `data/snapshot.json` 的改动（包括 `POST /api/ingest`）只在该实例生命周期内有效，重新部署或实例回收后丢失，多实例之间也不共享。
+
+因此当前采用「数据随构建产物发布」的方式：
+
+1. 抓取在构建前完成，`data/snapshot.json` 跟随源码进入构建产物；
+2. 每次更新提交到 Git，再重新部署，新版本即携带新数据；
+3. 站点读取的是 `dist/data/snapshot.json`，前端另有打包快照作为 API 不可用时的回退。
+
+需要更高实时性时，可改为外部存储：把快照写入数据库或对象存储（PostgreSQL、Redis、COS/OSS 等），API 启动时读取并定期刷新，写入不再依赖部署。届时 `server/src/store.ts` 只需替换读取来源。
 
 ## 数据说明
 
