@@ -4,6 +4,13 @@
 
 一个对外展示的价格聚合站点：统一抓取、归一化并展示不同供应商的 GPU 租赁与模型 API 报价，按卡时、1M tokens、单张、每秒等口径直接对比，并可经由 API 接入 Agent。
 
+## 在线 Demo
+
+**https://37lvjcp7on9p9q0ph26.traesite.cn**
+
+- 展示站与数据 API 同一域名：`/api/overview`、`/api/snapshot`、`/api/offers?category=gpu-hourly&q=H100`
+- 无需登录，所有人可见
+
 ## 功能
 
 - **四类价格视图**：GPU 裸金属、GPU 卡时、文本推理 API、图像 / 视频生成 API，外加月费套餐。
@@ -17,7 +24,8 @@
 ```
 agent-everything/
 ├── data/
-│   └── snapshot.json          # 唯一价格数据源（前后端共用）
+│   ├── snapshot.json          # 唯一价格数据源（前后端共用）
+│   └── sources.json           # 数据源注册表（抓取入口清单）
 ├── server/                    # Fastify 数据 API
 │   └── src/
 │       ├── index.ts           # 服务入口
@@ -61,6 +69,34 @@ npm run typecheck      # 类型检查
 npm start              # 运行编译后的 API
 ```
 
+## 数据源
+
+当前已配置并核验的抓取来源（完整入口、字段说明与解析备注见 [data/sources.json](data/sources.json)）：
+
+| 来源 | 裸金属 | 卡时 | token | 已入库 | 状态 |
+| --- | :---: | :---: | :---: | --- | --- |
+| 极智算 jygpu.com | ✅ | ✅ | ✅ | 16 / 11 / 12 | 已接入 |
+| 共绩算力 suanli.cn | ✅ | ✅ | ✅ | 11 / 22 / 7 | 已接入 |
+| 猿界算力 suanli8.com | ✅ | — | — | 7 | 已接入 |
+| 算力圈 suanliquan.com | ✅ | — | — | 3 | 已接入 |
+| 阿里云 aliyun.com | ✅ | 待确认 | 待确认 | 1 | 已接入 |
+| 腾讯云 cloud.tencent.com | ✅ | ✅ | — | 1 / 1 | 已接入 |
+| 百度智能云 cloud.baidu.com | 待确认 | ✅ | 待确认 | 4 | 已接入 |
+| 极云科技 | — | — | — | — | 极智算运营方，数据并入 jygpu |
+
+裸金属取整机月租，卡时按单卡归一化，token 价按 1M tokens 记。`sources.json` 中 `status=verified` 表示该入口已人工核验并能解析出价格，`pending` 表示入口待确认或需登录 / 前端渲染。
+
+### 欢迎补充数据源
+
+这是一个开放的比价项目，欢迎通过 PR 补充新的供应商或价格入口：
+
+1. 在 [data/sources.json](data/sources.json) 的 `sources` 中新增来源（或在已有来源下补 `targets`），填写 `providerId`、官网、维度、URL 与解析备注；
+2. 新供应商需同时在 `snapshot.json` 的 `providers` 中登记 `id` / `name` / `homepage`；
+3. 附上一条可复现的样例报价（型号、价格、计费单位、抓取时间），确认后把 `status` 改为 `verified`；
+4. 只采集公开挂牌价，遵守目标站点 robots.txt 与访问频率限制。
+
+也欢迎直接开 Issue 提供线索（官网链接 + 截图即可），我们来接。
+
 ## 数据 API
 
 | 方法 | 路径 | 说明 |
@@ -101,4 +137,9 @@ docker compose up -d --build
 
 ## 数据说明
 
-`data/snapshot.json` 当前为**演示快照**，用于展示数据结构与对比能力；价格来自公开报价的归一化样例，实际价格以各厂商官方渠道为准。接入抓取管道后，可替换为每日刷新的真实数据。
+`data/snapshot.json` 当前共 126 条报价，覆盖 23 家有效供应商：
+
+- **已人工核验**（2026-11-25）：GPU 裸金属 39 条、GPU 卡时 38 条、文本模型 token 19 条，均来自上表厂商官网公开报价；
+- **演示样例**：生图 / 生视频 API 18 条、月费套餐 12 条，用于展示数据结构，接入抓取管道后替换。
+
+价格会随厂商调价与库存变化，实际以下单页为准。接入抓取管道后，可按 `sources.json` 的清单每日刷新并替换快照。
