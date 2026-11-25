@@ -10,3 +10,6 @@ dist/
 
 # 抓取管道本地产出的私有快照
 data/*.local.json
+
+# 用户上传的临时素材，不入库
+.uploads/
