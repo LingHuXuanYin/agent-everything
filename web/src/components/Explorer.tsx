@@ -65,11 +65,11 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
   switch (category) {
     case 'gpu-baremetal': {
       columns = [
-        { key: 'provider', label: '供应商', sortable: true },
         { key: 'product', label: '整机机型', sortable: true },
+        { key: 'provider', label: '供应商', sortable: true },
         { key: 'gpu', label: 'GPU / 显存', sortable: true },
-        { key: 'price', label: '整机价', align: 'right', sortable: true },
-        { key: 'perGpu', label: '单卡折算', align: 'right', sortable: true },
+        { key: 'price', label: '整机月租', align: 'right', sortable: true },
+        { key: 'perGpu', label: '单卡月租', align: 'right', sortable: true },
         { key: 'region', label: '区域', sortable: true },
         { key: 'status', label: '状态', sortable: true },
         { key: 'source', label: '来源' },
@@ -104,14 +104,14 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
             price: (
               <span className="num-main">
                 {money(row.price, row.currency)}
-                <small>/时</small>
-                <em>≈ {money(row.price * 730, row.currency)}/月</em>
+                <small>/月</small>
+                <em>{row.minTerm}</em>
               </span>
             ),
             perGpu: (
               <span className="num-main">
                 {money(row.price / row.gpuCount, row.currency)}
-                <small>/卡时</small>
+                <small>/卡·月</small>
               </span>
             ),
             region: <span className="mono muted">{row.region}</span>,

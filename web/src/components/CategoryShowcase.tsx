@@ -113,7 +113,7 @@ export function CategoryShowcase({
                 <span className="cat-chip">Bare Metal</span>
               </div>
               <h3>GPU 裸金属</h3>
-              <p className="cat-desc">整机租赁，按小时计费，附单卡折算与月租估算。</p>
+              <p className="cat-desc">整机租赁，官网公开月租报价，附单卡月租折算。</p>
               <div className="mini-table">
                 {baremetal.map((row) => (
                   <div className="mini-row" key={row.id}>
@@ -123,7 +123,7 @@ export function CategoryShowcase({
                     <span className="mini-name">{row.product}</span>
                     <span className="mini-price">
                       {formatMoney(row.price / row.gpuCount, row.currency, 'USD', rates)}
-                      <small>/卡时</small>
+                      <small>/卡·月</small>
                     </span>
                   </div>
                 ))}
