@@ -673,7 +673,7 @@ img {
 
 .stats-inner {
   display: grid;
-  grid-template-columns: repeat(4, 1fr) auto;
+  grid-template-columns: repeat(4, 1fr);
   align-items: center;
   gap: 24px;
   padding: 26px 0;
@@ -1406,6 +1406,27 @@ img {
 .src-link:hover {
   color: var(--mint);
   border-color: var(--mint);
+}
+
+.src-link-cta {
+  width: auto;
+  padding: 0 10px;
+  height: 24px;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.02em;
+  color: var(--mint);
+  border-color: rgba(100, 240, 182, 0.28);
+  white-space: nowrap;
+}
+
+.src-link-cta:hover {
+  background: rgba(100, 240, 182, 0.08);
+}
+
+.charts-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: -24px 0 20px;
 }
 
 .delta {

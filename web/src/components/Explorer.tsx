@@ -66,13 +66,13 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
     case 'gpu-baremetal': {
       columns = [
         { key: 'product', label: '整机机型', sortable: true },
-        { key: 'provider', label: '供应商', sortable: true },
+        { key: 'provider', label: '服务平台', sortable: true },
         { key: 'gpu', label: 'GPU / 显存', sortable: true },
         { key: 'price', label: '整机月租', align: 'right', sortable: true },
         { key: 'perGpu', label: '单卡月租', align: 'right', sortable: true },
         { key: 'region', label: '区域', sortable: true },
         { key: 'status', label: '状态', sortable: true },
-        { key: 'source', label: '来源' },
+        { key: 'source', label: '立即获取' },
       ];
       rows = data.gpuBaremetal.map((row) => {
         const provider = index.get(row.providerId);
@@ -116,7 +116,7 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
             ),
             region: <span className="mono muted">{row.region}</span>,
             status: <AvailabilityTag value={row.availability} />,
-            source: <SourceLink href={row.sourceUrl} />,
+            source: <SourceLink href={row.sourceUrl} text="立即获取" />,
           },
         };
       });
@@ -126,14 +126,14 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
 
     case 'gpu-hourly': {
       columns = [
-        { key: 'provider', label: '供应商', sortable: true },
+        { key: 'provider', label: '服务平台', sortable: true },
         { key: 'gpu', label: 'GPU', sortable: true },
         { key: 'vram', label: '显存', align: 'right', sortable: true },
         { key: 'price', label: '单价', align: 'right', sortable: true },
         { key: 'term', label: '计费方式', sortable: true },
         { key: 'region', label: '区域', sortable: true },
         { key: 'status', label: '状态', sortable: true },
-        { key: 'source', label: '来源' },
+        { key: 'source', label: '立即获取' },
       ];
       rows = data.gpuHourly.map((row) => {
         const provider = index.get(row.providerId);
@@ -168,7 +168,7 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
             term: <span className="cell-sub">{row.minTerm}</span>,
             region: <span className="mono muted">{row.region}</span>,
             status: <AvailabilityTag value={row.availability} />,
-            source: <SourceLink href={row.sourceUrl} />,
+            source: <SourceLink href={row.sourceUrl} text="立即获取" />,
           },
         };
       });
@@ -179,12 +179,12 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
     case 'text-api': {
       columns = [
         { key: 'model', label: '模型', sortable: true },
-        { key: 'provider', label: '供应商', sortable: true },
+        { key: 'provider', label: '服务平台', sortable: true },
         { key: 'context', label: '上下文', align: 'right', sortable: true },
         { key: 'input', label: '输入 / 1M', align: 'right', sortable: true },
         { key: 'output', label: '输出 / 1M', align: 'right', sortable: true },
         { key: 'cached', label: '缓存命中', align: 'right', sortable: true },
-        { key: 'source', label: '来源' },
+        { key: 'source', label: '立即获取' },
       ];
       rows = data.textModels.map((row) => {
         const provider = index.get(row.providerId);
@@ -226,7 +226,7 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
                   <small>/1M</small>
                 </span>
               ),
-            source: <SourceLink href={row.sourceUrl} />,
+            source: <SourceLink href={row.sourceUrl} text="立即获取" />,
           },
         };
       });
@@ -237,12 +237,12 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
     case 'media-api': {
       columns = [
         { key: 'model', label: '模型', sortable: true },
-        { key: 'provider', label: '供应商', sortable: true },
+        { key: 'provider', label: '服务平台', sortable: true },
         { key: 'kind', label: '类型', sortable: true },
         { key: 'unit', label: '计量', sortable: true },
         { key: 'price', label: '单价', align: 'right', sortable: true },
         { key: 'resolution', label: '分辨率 / 时长', sortable: true },
-        { key: 'source', label: '来源' },
+        { key: 'source', label: '立即获取' },
       ];
       rows = data.mediaModels.map((row) => {
         const provider = index.get(row.providerId);
@@ -278,7 +278,7 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
               </span>
             ),
             resolution: <span className="mono muted">{row.resolution}</span>,
-            source: <SourceLink href={row.sourceUrl} />,
+            source: <SourceLink href={row.sourceUrl} text="立即获取" />,
           },
         };
       });
@@ -289,10 +289,10 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
     case 'plans': {
       columns = [
         { key: 'name', label: '套餐', sortable: true },
-        { key: 'provider', label: '供应商', sortable: true },
+        { key: 'provider', label: '服务平台', sortable: true },
         { key: 'monthly', label: '月费', align: 'right', sortable: true },
         { key: 'highlights', label: '主要权益' },
-        { key: 'source', label: '来源' },
+        { key: 'source', label: '立即获取' },
       ];
       rows = data.plans.map((row) => {
         const provider = index.get(row.providerId);
@@ -319,7 +319,7 @@ function buildCategory(category: Category, data: Snapshot, currency: Currency): 
               </span>
             ),
             highlights: <span className="cell-sub">{row.highlights.join(' · ')}</span>,
-            source: <SourceLink href={row.sourceUrl} />,
+            source: <SourceLink href={row.sourceUrl} text="立即获取" />,
           },
         };
       });
@@ -349,6 +349,16 @@ export function Explorer({
   const [providerFilter, setProviderFilter] = useState('all');
   const [currency, setCurrency] = useState<Currency>('USD');
   const [sort, setSort] = useState<SortState>({ key: 'perGpu', dir: 'asc' });
+
+  const gpuModels = useMemo(
+    () =>
+      new Set([
+        ...data.gpuBaremetal.map((row) => row.gpu),
+        ...data.gpuHourly.map((row) => row.gpu),
+      ]).size,
+    [data.gpuBaremetal, data.gpuHourly],
+  );
+  const apiCount = data.textModels.length + data.mediaModels.length;
 
   const built = useMemo(() => buildCategory(active, data, currency), [active, data, currency]);
 
@@ -399,8 +409,8 @@ export function Explorer({
         <SectionHead
           index="02"
           kicker="PRICE EXPLORER"
-          title="价格全景"
-          desc="切换维度、筛选供应商、按价格排序，或直接搜索型号。所有价格按当前币种统一折算。"
+          title="报价单"
+          desc={`${gpuModels} 款 GPU 型号，${apiCount} 个 API。选择一款，点击「立即获取」。`}
         />
 
         <div className="explorer">
@@ -429,18 +439,18 @@ export function Explorer({
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="搜索供应商、型号或区域…"
+                placeholder="搜索服务平台、型号或区域…"
                 aria-label="搜索报价"
               />
             </div>
 
             <label className="select-field">
-              <span className="sr-only">供应商</span>
+              <span className="sr-only">服务平台</span>
               <select
                 value={providerFilter}
                 onChange={(event) => setProviderFilter(event.target.value)}
               >
-                <option value="all">全部供应商</option>
+                <option value="all">全部服务平台</option>
                 {built.providers.map((provider) => (
                   <option key={provider.id} value={provider.id}>
                     {provider.name}

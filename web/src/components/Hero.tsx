@@ -53,26 +53,21 @@ export function Hero({ data }: { data: Snapshot }) {
             AI INFRA PRICE INTELLIGENCE
           </p>
           <h1>
-            全网 AI 算力与
-            <br />
-            <em>模型 API 价格</em>，
-            <br />
-            一处看清。
+            <em>算力集市</em>
           </h1>
           <p className="lede">
-            持续抓取 GPU 裸金属、卡时租赁、文本推理、图像与视频生成的价格，
-            归一化成可查询、可对比、可直接接入 Agent 的数据层。
+            展示全网 GPU 裸金属、卡时租赁、文本推理、图像与视频生成的价格。
           </p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#prices">
-              浏览价格全景
+              浏览报价单
             </a>
             <a className="btn btn-ghost" href="#method">
               了解数据来源
             </a>
           </div>
           <p className="hero-meta">
-            <span>{uniqueProviders} 家供应商</span>
+            <span>{uniqueProviders} 家服务平台</span>
             <span>{recordCount} 条报价</span>
             <span>5 个价格维度</span>
             <span>更新于 {relativeTime(data.meta.snapshotAt)}</span>

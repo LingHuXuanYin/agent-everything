@@ -16,9 +16,9 @@ export function Footer() {
 
         <nav className="footer-links" aria-label="页脚导航">
           <a href="#categories">分类</a>
-          <a href="#prices">价格全景</a>
+          <a href="#prices">报价单</a>
           <a href="#charts">对比</a>
-          <a href="#method">数据方法</a>
+          <a href="#method">数据获取</a>
           <a href="#api">API</a>
         </nav>
 

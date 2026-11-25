@@ -31,8 +31,8 @@ export function Method({ data }: { data: Snapshot }) {
         <SectionHead
           index="04"
           kicker="METHODOLOGY"
-          title="数据是怎么来的"
-          desc="抓取、归一化、校验、发布，四步构成一条可复现的价格数据管道。"
+          title="数据获取"
+          desc="抓取、归一化、校验、发布。"
         />
 
         <div className="method-grid">
@@ -60,7 +60,6 @@ export function Method({ data }: { data: Snapshot }) {
                 </span>
               ))}
             </div>
-            <p className="callout">{data.meta.note}</p>
           </aside>
         </div>
       </div>

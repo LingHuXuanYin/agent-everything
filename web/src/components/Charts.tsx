@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import type { Snapshot } from '../types';
-import { formatNumber, toUsd, unitSuffix } from '../lib/format';
+import { useMemo, useState } from 'react';
+import type { Currency, Snapshot } from '../types';
+import { formatMoney, toUsd, unitSuffix } from '../lib/format';
 import { SectionHead } from './Bits';
 
 interface BarItem {
@@ -40,8 +40,12 @@ function BarList({ items }: { items: BarItem[] }) {
 
 function RangeChart({
   rows,
+  currency,
+  rates,
 }: {
   rows: Array<{ gpu: string; min: number; max: number; count: number }>;
+  currency: Currency;
+  rates: { CNY: number };
 }) {
   const domain = Math.max(...rows.map((row) => row.max), 1) * 1.05;
 
@@ -49,7 +53,7 @@ function RangeChart({
     <div className="range-chart">
       <div className="range-head">
         <span>GPU 型号</span>
-        <span>USD / 卡时</span>
+        <span>{currency} / 卡时</span>
       </div>
       {rows.map((row) => (
         <div className="range-row" key={row.gpu}>
@@ -69,13 +73,14 @@ function RangeChart({
             <span className="range-dot is-max" style={{ left: `${(row.max / domain) * 100}%` }} />
           </span>
           <span className="range-value">
-            ${formatNumber(row.min)}–${formatNumber(row.max)}
+            {formatMoney(row.min, 'USD', currency, rates)}–
+            {formatMoney(row.max, 'USD', currency, rates)}
           </span>
         </div>
       ))}
       <div className="range-axis" aria-hidden="true">
-        <span>$0</span>
-        <span>${formatNumber(domain)}</span>
+        <span>{formatMoney(0, 'USD', currency, rates)}</span>
+        <span>{formatMoney(domain, 'USD', currency, rates)}</span>
       </div>
     </div>
   );
@@ -83,6 +88,8 @@ function RangeChart({
 
 export function Charts({ data }: { data: Snapshot }) {
   const rates = data.meta.rates;
+  const [currency, setCurrency] = useState<Currency>('USD');
+  const money = (usdValue: number) => formatMoney(usdValue, 'USD', currency, rates);
   const providers = useMemo(
     () => new Map(data.providers.map((provider) => [provider.id, provider])),
     [data.providers],
@@ -116,13 +123,13 @@ export function Charts({ data }: { data: Snapshot }) {
             label: model.model,
             sub: providers.get(model.providerId)?.short ?? model.providerId,
             value,
-            display: `$${formatNumber(value)}`,
+            display: money(value),
             suffix: '/1M',
           };
         })
         .sort((a, b) => a.value - b.value)
         .slice(0, 10),
-    [data.textModels, providers, rates],
+    [data.textModels, providers, rates, currency], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const mediaItems = useMemo(() => {
@@ -136,14 +143,14 @@ export function Charts({ data }: { data: Snapshot }) {
             label: model.model,
             sub: providers.get(model.providerId)?.short ?? model.providerId,
             value,
-            display: `$${formatNumber(value)}`,
+            display: money(value),
             suffix: unitSuffix(model.unit),
           };
         })
         .sort((a, b) => a.value - b.value)
         .slice(0, 6);
     return { image: build('image'), video: build('video') };
-  }, [data.mediaModels, providers, rates]);
+  }, [data.mediaModels, providers, rates, currency]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <section className="section" id="charts">
@@ -151,29 +158,39 @@ export function Charts({ data }: { data: Snapshot }) {
         <SectionHead
           index="03"
           kicker="COMPARISON"
-          title={
-            <>
-              同一型号，
-              <br />
-              价格差多少？
-            </>
-          }
-          desc="按统一口径换算后，同一张卡、同一类模型在不同供应商之间的价格区间与成本排序。"
+          title="价格区间"
+          desc="按统一口径换算后，同一张卡、同一类模型在不同服务平台之间的价格区间与成本排序。"
         />
+
+        <div className="charts-toolbar">
+          <div className="currency-toggle" role="group" aria-label="图表显示币种">
+            {(['USD', 'CNY'] as Currency[]).map((item) => (
+              <button
+                key={item}
+                type="button"
+                aria-pressed={currency === item}
+                className={currency === item ? 'is-active' : ''}
+                onClick={() => setCurrency(item)}
+              >
+                {item === 'USD' ? '$ USD' : '¥ CNY'}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="charts-grid">
           <article className="chart-card chart-wide">
             <header className="chart-head">
               <h3>GPU 卡时价格带</h3>
-              <span>USD / 卡时 · 各供应商最低与最高</span>
+              <span>{currency} / 卡时 · 各平台最低与最高</span>
             </header>
-            <RangeChart rows={ranges} />
+            <RangeChart rows={ranges} currency={currency} rates={rates} />
           </article>
 
           <article className="chart-card">
             <header className="chart-head">
               <h3>文本模型输出成本</h3>
-              <span>USD / 1M tokens · 取最低的 10 个</span>
+              <span>{currency} / 1M tokens · 取最低的 10 个</span>
             </header>
             <BarList items={textItems} />
           </article>

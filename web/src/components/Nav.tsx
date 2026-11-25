@@ -3,7 +3,7 @@ import { BrandMark } from './Bits';
 
 const LINKS = [
   { href: '#categories', label: '分类' },
-  { href: '#prices', label: '价格全景' },
+  { href: '#prices', label: '报价单' },
   { href: '#charts', label: '对比' },
   { href: '#method', label: '数据方法' },
   { href: '#api', label: 'API' },

@@ -90,13 +90,7 @@ export function CategoryShowcase({
         <SectionHead
           index="01"
           kicker="CATEGORIES"
-          title={
-            <>
-              四类价格，
-              <br />
-              一套口径。
-            </>
-          }
+          title="四种算力计价模型"
           desc="从整机租赁到按秒调用，把不同厂商的计费方式折算到同一维度，直接比较。"
         />
 

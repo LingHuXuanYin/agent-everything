@@ -47,17 +47,25 @@ export function AvailabilityTag({ value }: { value: string }) {
   );
 }
 
-export function SourceLink({ href, label }: { href: string; label?: string }) {
+export function SourceLink({
+  href,
+  label,
+  text,
+}: {
+  href: string;
+  label?: string;
+  text?: string;
+}) {
   return (
     <a
-      className="src-link"
+      className={`src-link${text ? ' src-link-cta' : ''}`}
       href={href}
       target="_blank"
       rel="noreferrer noopener"
       aria-label={label ?? '查看官方价格来源'}
       title="查看官方价格来源"
     >
-      ↗
+      {text ?? '↗'}
     </a>
   );
 }

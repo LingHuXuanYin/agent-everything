@@ -1,5 +1,4 @@
 import type { Snapshot } from '../types';
-import { relativeTime } from '../lib/format';
 
 export function StatsBand({ data }: { data: Snapshot }) {
   const providers = new Set(data.providers.map((provider) => provider.id)).size;
@@ -11,7 +10,7 @@ export function StatsBand({ data }: { data: Snapshot }) {
     data.plans.length;
 
   const stats = [
-    { value: String(providers), label: '供应商', note: 'Providers' },
+    { value: String(providers), label: '服务平台', note: 'Providers' },
     { value: records.toLocaleString('en-US'), label: '报价数据点', note: 'Offers' },
     { value: '05', label: '价格维度', note: 'Dimensions' },
     { value: '每日', label: '抓取频率', note: 'Refresh' },
@@ -27,11 +26,6 @@ export function StatsBand({ data }: { data: Snapshot }) {
             <span className="stat-note">{stat.note}</span>
           </div>
         ))}
-        <p className="stats-stamp">
-          快照时间
-          <br />
-          <b>{relativeTime(data.meta.snapshotAt)}</b>
-        </p>
       </div>
     </section>
   );
