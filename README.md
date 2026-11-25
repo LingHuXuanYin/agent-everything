@@ -1,323 +1,104 @@
-# 模特卡片生成器 (Model Card Generator)
+# agent everything
 
-> 上传照片 + 录入身材数据 + 拖拽画布 + 一键导出 JPG/PDF
+> 全网 AI 算力与模型 API 的价格情报站 · GPU 裸金属 / 卡时 / 文本推理 / 图像视频 / 月费套餐
 
-[![Status](https://img.shields.io/badge/status-v0.5-brightgreen)]() [![Node](https://img.shields.io/badge/node-%3E%3D20-green)]()
+一个对外展示的价格聚合站点：统一抓取、归一化并展示不同供应商的 GPU 租赁与模型 API 报价，按卡时、1M tokens、单张、每秒等口径直接对比，并可经由 API 接入 Agent。
 
-## 📂 项目结构
+## 功能
+
+- **四类价格视图**：GPU 裸金属、GPU 卡时、文本推理 API、图像 / 视频生成 API，外加月费套餐。
+- **价格浏览器**：分类切换、供应商筛选、关键词搜索、按价格/型号排序、USD/CNY 币种切换。
+- **对比图表**：同型号卡时价格带、文本模型输出成本、生图/生视频单次成本。
+- **实时数据 API**：站点与 Agent 共用同一份快照；API 不可用时自动回退到内置快照。
+- **抓取入库接口**：抓取管道可将归一化后的报价 POST 到 `/api/ingest`。
+
+## 项目结构
 
 ```
-photo-design/
-├── docs/                              # 产品设计稿 + 迭代报告 + 部署文档
-│   ├── 模特卡片生成器-产品原型设计.md
-│   ├── 迭代开发报告-v0.1.md ~ v0.5.md
-│   ├── fnOS-release.md                # fnOS-release 分支说明
-│   ├── 部署到飞牛OS.md                # 飞牛OS 部署步骤
-│   └── 部署到飞牛OS-实战复盘.md        # 踩坑复盘（强烈推荐阅读）
-├── env_config/                        # 环境配置集中管理
-│   ├── .env_default                   # 兜底
-│   ├── .env_dev                       # 本地开发
-│   ├── .env_fnOS                      # 飞牛OS 生产
-│   ├── .env_local.example             # 个人本地示例（git 忽略 .env_local）
-│   └── README.md
-├── scripts/                           # 工具脚本
-│   ├── check-ports.ps1                # 启动前端口预检（predev 钩子）
-│   ├── load-env.js                    # 跨平台 env loader（npm run dev 自动 source）
-│   ├── download-fonts.js              # 思源黑体下载（CDN fallback）
-│   ├── download-inter.js              # Inter 下载（woff2 → ttf 转换）
-│   ├── test-api.js                    # 后端 API 集成测试（23 用例）
-│   ├── test-store.js                  # 前端 store / model 单元测试（46 用例）
-│   └── test-all-templates.js          # 模板渲染回归测试
-├── web/                               # 前端（Vite 6 + React 18 + TS + Konva）
-│   ├── src/
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   └── canvas/                    # 画布编辑器 + Dashboard
-│   ├── package.json
-│   └── vite.config.ts
-├── server/                            # 后端（Fastify 4 + TS + @napi-rs/canvas）
-│   ├── src/
-│   │   ├── index.ts                   # Fastify 入口
-│   │   ├── routes/                    # ping, render
-│   │   └── render/                    # 渲染器 + 字体管理
-│   ├── fonts/                         # 内置字体（启动时自动注册）
-│   │   ├── Inter-Regular.ttf
-│   │   ├── Inter-Bold.ttf
-│   │   ├── SourceHanSansSC-Regular.otf
-│   │   └── SourceHanSansSC-Bold.otf
-│   ├── Dockerfile                     # 多阶段 build
-│   └── package.json
-├── docker-compose.yml                 # web (10001) + server (10002) 编排
-├── package.json                       # 根 workspaces 配置
-├── fnOS-release                       # Git 分支：飞牛OS 部署专用
-└── README.md                          # 你在这里
+agent-everything/
+├── data/
+│   └── snapshot.json          # 唯一价格数据源（前后端共用）
+├── server/                    # Fastify 数据 API
+│   └── src/
+│       ├── index.ts           # 服务入口
+│       ├── store.ts           # 快照加载 / 查询 / 入库
+│       ├── types.ts
+│       └── routes/data.ts     # /health /overview /snapshot /offers /ingest
+├── web/                       # React + Vite 展示站
+│   └── src/
+│       ├── App.tsx
+│       ├── styles.css
+│       ├── components/        # Hero / 分类卡 / 价格浏览器 / 图表 / 方法论 / API
+│       └── data/snapshot.ts   # 内置快照回退
+├── docker-compose.yml         # web(10001) + api(10002)
+└── package.json               # npm workspaces
 ```
 
----
+## 本地开发
 
-## 🚀 快速开始
+需要 Node.js 20+。
 
-### 1. 安装 Node.js 20+
-
-```powershell
-# 用 winget (推荐)
-winget install OpenJS.NodeJS.LTS
-
-# 或者直接下载安装
-# https://nodejs.org/
-```
-
-### 2. 克隆 + 安装依赖
-
-```powershell
-git clone https://github.com/LingHuXuanYin/photo-casting-demo.git
-cd photo-casting-demo
+```bash
 npm install
-```
-
-### 3. 启动开发服务
-
-```powershell
-# 一键启动前后端（自动从 env_config/.env_dev 加载环境变量）
 npm run dev
 ```
 
-启动后访问：
+- 展示站：http://localhost:5173
+- 数据 API：http://localhost:3001/api/overview
 
-- **Web UI**：http://localhost:5173
-- **Server API**：http://localhost:3001/api/ping
-- **测试连接**：点击 web 上"🚀 测试连接"按钮，看到 `pong from model-card-server` = 前后端联通成功
-
-### 4. 跑测试
-
-```powershell
-# 后端 API（23 用例）
-node scripts/test-api.js
-
-# 前端 store / model（46 用例）
-node scripts/test-store.js
-
-# 模板渲染（5 个内置模板）
-node scripts/test-all-templates.js
-```
-
-### 5. 部署到飞牛OS
-
-详细步骤看 [`docs/部署到飞牛OS.md`](docs/部署到飞牛OS.md)。先看的复盘看 [`docs/部署到飞牛OS-实战复盘.md`](docs/部署到飞牛OS-实战复盘.md)（踩坑 + 调试 checklist）。
+单独启动：
 
 ```bash
-ssh xiaoyin@飞牛IP
-cd /vol1/1000/photo-casting-demo
-git fetch origin
-git checkout -b fnOS-release origin/fnOS-release
-git pull origin fnOS-release
-docker compose up -d --build
-
-# 验证
-docker compose ps                                       # 两个容器都 Up (healthy)
-docker compose logs --tail=50 server                    # Server listening at 3001
-curl http://localhost:10001                              # web 起来
-# 浏览器打开 http://飞牛IP:10001 → 完整可用
+npm run dev:web
+npm run dev:server
 ```
 
----
+## 构建
 
-## 🛠️ 技术栈
-
-| 端 | 技术 |
-|----|------|
-| 前端 | Vite 6 + React 18 + TypeScript 5 + Konva.js |
-| 后端 | Fastify 4 + TypeScript 5 + @napi-rs/canvas + pdf-lib + tsx (dev) |
-| 存储 | 浏览器 IndexedDB（idb 库） |
-| 字体 | Inter (拉丁) + 思源黑体 (CJK)，打包到 `server/fonts/` 启动时自动注册 |
-| 部署 | Docker Compose + node:26-alpine + nginx:alpine + 国内 npm mirror |
-| 构建 | npm workspaces + concurrently |
-
----
-
-## 📍 端口分配
-
-### 本地 dev
-
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| Web | 5173 | Vite dev server（带 HMR） |
-| Server | 3001 | Fastify API |
-| 代理 | /api/* | Vite 把 /api/* 代理到 3001 |
-
-### 飞牛OS Docker 部署
-
-| 服务 | 宿主端口 | 容器内端口 | 说明 |
-|------|---------|-----------|------|
-| Web | **10001** | 80 | 用户访问入口，浏览器开 `http://飞牛IP:10001` |
-| Server | **10002** | 3001 | API 服务（一般通过 web 反代访问） |
-| 容器间 | /api/* | 3001 | web 容器内 nginx 反代到 `model-card-server:3001` |
-
-> 端口选 10001/10002 是为了避开飞牛OS WebUI 占用的 80 端口和常见 NAS 服务的 8080/5000。
-
----
-
-## 🗺️ 开发路线
-
-| 阶段 | 内容 | 状态 |
-|------|------|------|
-| P0-1 | 前后端骨架 + 联通 | ✅ |
-| P0-2 | Konva.js 画布编辑器（拖拽/缩放/旋转/多选/撤销重做/对齐辅助线/图层面板/属性面板） | ✅ |
-| P0-3 | IndexedDB 草稿（自动保存/启动加载/Ctrl+S） | ✅ |
-| P0-4 | 模板系统（5 个内置模板：经典竖版/现代横版/极简方形/大片风格/黑白大片） | ✅ |
-| P0-5 | 后端渲染（@napi-rs/canvas + pdf-lib，JPG/PDF，1x/2x） | ✅ |
-| P0-6 | 端到端联调（自动化测试：后端 23 用例 + 前端 46 用例） | ✅ |
-| P0-7 | 项目列表 UI（Dashboard + 缩略图 + 搜索 + 删除） | ✅ |
-| **v0.5** | **飞牛OS Docker 部署 + 部署工具链** | **✅** |
-| v1 内部发布 | 给模特试用，收集反馈 | 计划中 |
-| v2 | 账号体系 / 云同步 / 投递记录 / 社区发现流 | 路线规划 |
-
-详细规划见 `docs/模特卡片生成器-产品原型设计.md`，迭代进度见 `docs/迭代开发报告-v0.1.md` ~ `v0.5.md`。
-
----
-
-## 🔤 字体说明
-
-v1 阶段**所有字体都打包到 `server/fonts/`**，不依赖系统字体：
-
-| 字体 | 用途 | 协议 |
-|------|------|------|
-| Source Han Sans SC Regular/Bold | 中文（CJK） | OFL（免费可商用） |
-| Inter Regular/Bold | 英文 + 数字 | OFL（免费可商用） |
-
-启动时 `server/src/render/fonts.ts` 会自动扫描并按文件名注册到 `@napi-rs/canvas`：
-- `Inter-*.ttf` → 注册为 family `"Inter"`
-- `SourceHanSansSC-*.otf` → 注册为 family `"Source Han Sans SC"`
-
-模板的 fontFamily 都用 `'"Inter", "Source Han Sans SC", sans-serif'`，canvas 会自动按字符 fallback（中文走思源黑体，英文/数字走 Inter）。
-
-如果字体文件丢失，可以重新下载：
-
-```powershell
-node scripts/download-fonts.js   # 思源黑体 ~32MB
-node scripts/download-inter.js   # Inter ~120KB
+```bash
+npm run build          # 构建 web + server
+npm run typecheck      # 类型检查
+npm start              # 运行编译后的 API
 ```
 
----
+## 数据 API
 
-## 📝 常用命令
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/api/health` | 健康检查 |
+| GET | `/api/overview` | 覆盖统计与快照时间 |
+| GET | `/api/snapshot` | 完整价格快照 |
+| GET | `/api/offers?category=&provider=&q=&limit=` | 分类查询 / 过滤 |
+| POST | `/api/ingest` | 抓取管道写入报价（需 `INGEST_TOKEN`） |
 
-```powershell
-# 依赖
-npm install                      # 装所有依赖（workspaces）
-npm install --include=dev         # 包括 devDeps（本地 dev 需要）
+`category` 取值：`gpu-baremetal`、`gpu-hourly`、`text-api`、`media-api`、`plans`。
 
-# 开发
-npm run dev                      # 一键启动前后端（自动 source env_config/.env_dev）
-npm run dev:web                  # 仅前端
-npm run dev:server               # 仅后端
+```bash
+curl "http://localhost:3001/api/offers?category=gpu-hourly&q=H100"
+```
 
-# 测试
-node scripts/test-api.js         # 后端 API
-node scripts/test-store.js       # 前端 store
-node scripts/test-all-templates.js
+写入示例：
 
-# 类型检查 + 构建
-npm run typecheck                 # 跑所有 workspace 的 typecheck
-npm run build                     # 生产构建
+```bash
+curl -X POST "http://localhost:3001/api/ingest" \
+  -H "content-type: application/json" \
+  -H "x-ingest-token: $INGEST_TOKEN" \
+  -d '{"category":"gpu-hourly","rows":[{"id":"hr-example","providerId":"vast","gpu":"H100 SXM","gpuCount":1,"vramGb":80,"price":1.79,"currency":"USD","region":"Marketplace","minTerm":"按秒计费","availability":"available","sourceUrl":"https://vast.ai/pricing"}]}'
+```
 
-# 单个 workspace
-npm run dev --workspace=web
-npm run build --workspace=server
+报价按 `id` 合并去重，写入 `data/snapshot.json`（文件系统只读时仅保留在内存中）。
 
-# 部署到飞牛OS
-ssh xiaoyin@飞牛IP
-cd /vol1/1000/photo-casting-demo
-git pull origin fnOS-release
+## Docker
+
+```bash
 docker compose up -d --build
 ```
 
----
+- Web：http://localhost:10001
+- API：http://localhost:10002/api/overview
 
-## 🔧 环境变量（env_config/）
+生产环境请修改 `docker-compose.yml` 中的 `INGEST_TOKEN`。
 
-所有环境变量集中在 `env_config/` 目录，**`npm run dev` 自动 source `env_config/.env_dev`**，docker 自动读 `env_config/.env_fnOS`。
+## 数据说明
 
-**优先级**（后加载的覆盖前面的）：
-```
-.env_default   兜底
-.env_dev       本地开发
-.env_fnOS      飞牛OS 生产
-.env_local     个人本地覆盖（git 忽略，最高优先级）
-```
-
-**常用变量**：
-
-| 变量 | 默认 | 用途 |
-|------|------|------|
-| `NODE_ENV` | `production` | Node 模式（dev/production） |
-| `PORT` | `3001` | Server 监听端口（容器内） |
-| `HOST` | `0.0.0.0` | Server 绑定地址 |
-| `WEB_ORIGIN` | `http://localhost:10001` | CORS 允许的 web 来源 |
-
-**Docker 加载**：自动（`env_file: env_config/.env_fnOS`）
-
-**本地 dev 加载**：自动（`scripts/load-env.js` 在 dev script 链里）
-
-**本地 production 加载**：
-```powershell
-node scripts/load-env.js env_config/.env_fnOS -- node server/dist/index.js
-```
-
-详细看 [`env_config/README.md`](env_config/README.md)。
-
----
-
-## 🌿 Git 分支
-
-- **`main`**（默认）：开发主线。所有 P0 功能、bugfix、Node 26 / canvas 最新版
-- **`fnOS-release`**：飞牛OS NAS 部署专用。包含 `env_config/`、部署文档、复盘报告
-
-**日常 workflow**：
-```bash
-# 开发
-git checkout main
-git commit -m "..." ; git push origin main
-
-# 飞牛OS 同步
-git checkout fnOS-release
-git merge main
-git push origin fnOS-release
-```
-
-详细看 [`docs/fnOS-release.md`](docs/fnOS-release.md)。
-
----
-
-## 📦 部署
-
-### 飞牛OS NAS（当前唯一部署目标）
-
-详细步骤看 [`docs/部署到飞牛OS.md`](docs/部署到飞牛OS.md)。
-
-关键点：
-- 基础镜像：`node:26-alpine` + `nginx:alpine`（你飞牛OS 本地要有）
-- npm 源：`npmmirror.com`（国内加速）
-- 端口：10001/10002（避开 80/8080/5000）
-- 数据：用户项目存浏览器 IndexedDB，不在容器里
-
-**部署必备**：
-1. 飞牛OS 已装 Docker（v0.8+）
-2. SSH 启用（普通用户 + sudo 权限即可）
-3. 飞牛本地有 `node:26-alpine` 和 `nginx:alpine` 镜像
-4. WebUI / 路由器防火墙放行 10001/10002 端口
-
-### 复盘教训（强烈推荐阅读）
-
-[`docs/部署到飞牛OS-实战复盘.md`](docs/部署到飞牛OS-实战复盘.md) 记录了：
-- 10 阶段踩坑时间线
-- 每个坑的真因 + 修法 + 关键经验
-- 调试工具集（docker ps / logs / inspect / run --rm 顺序）
-- 完整部署流程（普通用户 + sudo）
-- 7 条复盘教训
-
----
-
-## 📄 许可证
-
-私有项目，v1 阶段。
+`data/snapshot.json` 当前为**演示快照**，用于展示数据结构与对比能力；价格来自公开报价的归一化样例，实际价格以各厂商官方渠道为准。接入抓取管道后，可替换为每日刷新的真实数据。

@@ -1,15 +1,14 @@
 /**
- * 模特卡片生成器 - 后端服务入口
+ * agent-everything · 价格数据 API
  *
- * 启动方式：
- *   开发：npm run dev  (tsx watch)
- *   生产：npm run build && npm start
+ * 开发：npm run dev --workspace=server   (tsx watch)
+ * 生产：npm run build && npm start       (node dist/index.js)
  */
 
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import { pingRoutes } from './routes/ping.js';
-import { renderRoutes } from './routes/render.js';
+import { dataRoutes } from './routes/data.js';
+import { getDataFile, getSnapshot } from './store.js';
 
 const PORT = Number(process.env.PORT ?? 3001);
 const HOST = process.env.HOST ?? '0.0.0.0';
@@ -17,12 +16,10 @@ const WEB_ORIGIN = process.env.WEB_ORIGIN ?? 'http://localhost:5173';
 
 async function bootstrap() {
   const isDev = process.env.NODE_ENV !== 'production';
+
   const app = Fastify({
     logger: {
       level: process.env.LOG_LEVEL ?? 'info',
-      // dev (npm run dev) 用 pino-pretty 带颜色，
-      // production (容器 / npm start) 用 pino 默认 JSON 输出到 stdout
-      // —— 不依赖 pino-pretty（它只在 devDependencies 里）
       ...(isDev && {
         transport: {
           target: 'pino-pretty',
@@ -30,31 +27,27 @@ async function bootstrap() {
         },
       }),
     },
-    // 允许较大的请求体：画布元素含 base64 图片，
-    // 10 张图 ≈ 5-10MB，加上其他 JSON 字段需要更多
-    bodyLimit: 50 * 1024 * 1024, // 50MB
   });
 
-  // CORS: 允许本地 Vite 开发服务器
   await app.register(cors, {
-    origin: [WEB_ORIGIN],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin: [WEB_ORIGIN, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    methods: ['GET', 'POST', 'OPTIONS'],
   });
 
-  // 健康检查
   app.get('/health', async () => ({ status: 'ok', uptime: process.uptime() }));
 
-  // 业务路由
-  await app.register(pingRoutes, { prefix: '/api' });
-  await app.register(renderRoutes, { prefix: '/api/cards' });
+  await app.register(dataRoutes, { prefix: '/api' });
 
   try {
     await app.listen({ port: PORT, host: HOST });
-    app.log.info(`🚀 Server ready at http://localhost:${PORT}`);
-    app.log.info(`🌐 Allowing CORS origin: ${WEB_ORIGIN}`);
-  } catch (err) {
-    app.log.error(err);
+    const snapshot = getSnapshot();
+    app.log.info(`🚀 agent-everything API · http://localhost:${PORT}`);
+    app.log.info(`📦 数据文件：${getDataFile()}`);
+    app.log.info(
+      `📊 ${snapshot.gpuBaremetal.length + snapshot.gpuHourly.length + snapshot.textModels.length + snapshot.mediaModels.length + snapshot.plans.length} 条报价 · ${snapshot.meta.snapshotAt}`,
+    );
+  } catch (error) {
+    app.log.error(error);
     process.exit(1);
   }
 }

@@ -1,18 +1,18 @@
 {
-  "name": "model-card-generator",
+  "name": "agent-everything",
   "version": "0.1.0",
   "private": true,
-  "description": "模特卡片生成器 monorepo - 前后端 + 设计稿",
+  "description": "Agent Everything — 全网 AI 算力与模型 API 价格情报站",
   "workspaces": [
     "web",
     "server"
   ],
   "scripts": {
-    "predev": "powershell -ExecutionPolicy Bypass -File scripts/check-ports.ps1",
-    "dev": "concurrently -n web,server -c cyan,magenta \"npm:dev --workspace=web\" \"npm:dev --workspace=server\"",
+    "dev": "concurrently -n web,api -c cyan,magenta \"npm:dev --workspace=web\" \"npm:dev --workspace=server\"",
     "dev:web": "npm run dev --workspace=web",
     "dev:server": "npm run dev --workspace=server",
     "build": "npm run build --workspace=web && npm run build --workspace=server",
+    "start": "npm run start --workspace=server",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "devDependencies": {
