@@ -77,9 +77,19 @@ const YUANJIE_RULES = [
 
 const SUANLIQUAN_RULES = [
   [/Pro6000/i, 'bm-slq-pro6000-96'],
+  [/Pro5000/i, 'bm-slq-pro5000-72'],
+  [/B300/i, 'bm-slq-b300-288'],
+  [/H200/i, 'bm-slq-h200-141'],
+  [/H100/i, 'bm-slq-h100-80'],
+  [/H800/i, 'bm-slq-h800-80'],
+  [/H20-/i, 'bm-slq-h20-141'],
+  [/A100/i, 'bm-slq-a100-80'],
+  [/A800/i, 'bm-slq-a800-80'],
+  [/910C/i, 'bm-slq-910c-128'],
+  [/910B/i, 'bm-slq-910b-64'],
+  [/P800/i, 'bm-slq-p800-96'],
   [/4090/, 'bm-slq-4090'],
   [/5090/, 'bm-slq-5090'],
-  [/H20/, 'bm-slq-h20-141'],
 ];
 
 function parseApetops(html, pageUrl) {
@@ -136,7 +146,7 @@ async function main() {
   const sources = [
     { name: '猿界·高性能', url: 'https://apetops.com/gaoxingnengsuanli/', parse: parseApetops, rules: YUANJIE_RULES, min: 10 },
     { name: '猿界·推理', url: 'https://apetops.com/tongyongsuanli/', parse: parseApetops, rules: YUANJIE_RULES, min: 8 },
-    { name: '算力圈', url: 'https://www.suanliquan.com/', parse: parseSuanliquan, rules: SUANLIQUAN_RULES, min: 3 },
+    { name: '算力圈', url: 'https://www.suanliquan.com/gpu.html', parse: parseSuanliquan, rules: SUANLIQUAN_RULES, min: 10 },
   ];
 
   for (const source of sources) {

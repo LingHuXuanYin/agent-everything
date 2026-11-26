@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "0.1.0",
-    "snapshotAt": "2026-11-26T08:04:54+08:00",
+    "snapshotAt": "2026-11-26T10:25:48+08:00",
     "rates": {
       "USD": 1,
       "CNY": 7.2
@@ -821,7 +821,147 @@
       "region": "郑州",
       "minTerm": "按月起租",
       "availability": "limited",
-      "sourceUrl": "https://www.suanliquan.com/"
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-a100-80",
+      "providerId": "suanliquan",
+      "product": "A100 80GB 8卡整机",
+      "gpu": "NVIDIA A100",
+      "gpuCount": 8,
+      "vramGb": 80,
+      "price": 45000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-a800-80",
+      "providerId": "suanliquan",
+      "product": "A800 80GB 8卡整机",
+      "gpu": "NVIDIA A800",
+      "gpuCount": 8,
+      "vramGb": 80,
+      "price": 38000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-h100-80",
+      "providerId": "suanliquan",
+      "product": "H100 80GB 8卡整机",
+      "gpu": "NVIDIA H100",
+      "gpuCount": 8,
+      "vramGb": 80,
+      "price": 96000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-h200-141",
+      "providerId": "suanliquan",
+      "product": "H200 141GB 8卡整机",
+      "gpu": "NVIDIA H200",
+      "gpuCount": 8,
+      "vramGb": 141,
+      "price": 155000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-h800-80",
+      "providerId": "suanliquan",
+      "product": "H800 80GB 8卡整机",
+      "gpu": "NVIDIA H800",
+      "gpuCount": 8,
+      "vramGb": 80,
+      "price": 85000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-pro5000-72",
+      "providerId": "suanliquan",
+      "product": "PRO 5000 72GB 8卡整机",
+      "gpu": "NVIDIA PRO 5000",
+      "gpuCount": 8,
+      "vramGb": 72,
+      "price": 28000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-b300-288",
+      "providerId": "suanliquan",
+      "product": "B300 288GB 8卡整机",
+      "gpu": "NVIDIA B300",
+      "gpuCount": 8,
+      "vramGb": 288,
+      "price": 388000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-910b-64",
+      "providerId": "suanliquan",
+      "product": "910B 64GB 8卡整机",
+      "gpu": "华为 910B",
+      "gpuCount": 8,
+      "vramGb": 64,
+      "price": 16500,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-910c-128",
+      "providerId": "suanliquan",
+      "product": "910C 128GB 8卡整机",
+      "gpu": "华为 910C",
+      "gpuCount": 8,
+      "vramGb": 128,
+      "price": 68000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
+    },
+    {
+      "id": "bm-slq-p800-96",
+      "providerId": "suanliquan",
+      "product": "P800 96GB 8卡整机",
+      "gpu": "昆仑芯 P800",
+      "gpuCount": 8,
+      "vramGb": 96,
+      "price": 25000,
+      "currency": "CNY",
+      "region": "郑州",
+      "minTerm": "按月起租",
+      "availability": "limited",
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
     },
     {
       "id": "bm-slq-h20-141",
@@ -835,7 +975,7 @@
       "region": "郑州",
       "minTerm": "按月起租",
       "availability": "limited",
-      "sourceUrl": "https://www.suanliquan.com/"
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
     },
     {
       "id": "bm-slq-5090",
@@ -849,7 +989,7 @@
       "region": "郑州",
       "minTerm": "按月起租",
       "availability": "limited",
-      "sourceUrl": "https://www.suanliquan.com/"
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
     },
     {
       "id": "bm-slq-4090",
@@ -863,7 +1003,7 @@
       "region": "郑州",
       "minTerm": "按月起租",
       "availability": "limited",
-      "sourceUrl": "https://www.suanliquan.com/"
+      "sourceUrl": "https://www.suanliquan.com/gpu.html"
     },
     {
       "id": "bm-aliyun-ebmgn8is",

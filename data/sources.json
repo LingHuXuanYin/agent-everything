@@ -118,17 +118,17 @@
       "targets": [
         {
           "dimension": "gpu-baremetal",
-          "url": "https://www.suanliquan.com/",
+          "url": "https://www.suanliquan.com/gpu.html",
           "format": "html",
           "status": "verified",
-          "notes": "首页「GPU 物理服务器」区块给出 8 卡整机预估价 ¥/月/台（4090 ¥9000、5090 ¥16500、H20 141G ¥56000），页面注明「以实际交易价为准」。已入库 3 条。"
+          "notes": "「GPU 物理服务器」列表给出 14 款 8 卡整机预估价 ¥/月/台（4090、5090、A100-80、A800-80、H100、H20-141、H200-141、H800、PRO 5000、PRO 6000、B300-288、910B、910C、P800），页面注明「以实际交易价为准」。已全部入库 14 条。"
         },
         {
           "dimension": "gpu-hourly",
-          "url": "https://www.suanliquan.com/gpu.html",
-          "format": "html",
+          "url": null,
+          "format": null,
           "status": "pending",
-          "notes": "该页为云 GPU 按卡月预估价（3090 ¥1300、4090 ¥1800、5090 ¥2500、910B ¥12000 元/月/卡），非卡时报价；如需卡时必须除以 730 并标注为折算价，暂不入库。"
+          "notes": "算力圈只提供整机月租，不提供按卡时报价；卡时维度暂不入库（避免用月租 ÷730 生成推算价）。"
         }
       ],
       "crawl": {
