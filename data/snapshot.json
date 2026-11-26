@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "0.1.0",
-    "snapshotAt": "2026-11-25T21:14:25+08:00",
+    "snapshotAt": "2026-11-26T08:04:54+08:00",
     "rates": {
       "USD": 1,
       "CNY": 7.2
@@ -1040,7 +1040,7 @@
       "gpu": "V100 NVLink 32G",
       "gpuCount": 8,
       "vramGb": 32,
-      "price": 46000,
+      "price": 50600,
       "currency": "CNY",
       "region": "上海",
       "minTerm": "包年包月",
