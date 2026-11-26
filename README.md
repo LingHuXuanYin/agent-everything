@@ -6,7 +6,7 @@
 
 ## 在线 Demo
 
-**https://37lvjcp7on9p9q0ph26.traesite.cn**
+**https://agent-everything.traesite.cn**
 
 - 展示站与数据 API 同一域名：`/api/overview`、`/api/snapshot`、`/api/offers?category=gpu-hourly&q=H100`
 - 无需登录，所有人可见
