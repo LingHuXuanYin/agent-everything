@@ -1,8 +1,8 @@
 {
   "meta": {
     "name": "agent-everything 数据源注册表",
-    "version": "0.2.1",
-    "updatedAt": "2026-11-25T19:20:00+08:00",
+    "version": "0.2.2",
+    "updatedAt": "2026-11-26T11:55:30+08:00",
     "description": "全网 AI 算力与模型 API 价格的数据源清单。每个来源按价格维度登记抓取入口，供采集管道读取；抓取结果归一化后写入 data/snapshot.json。",
     "snapshotFile": "data/snapshot.json",
     "note": "coverage=true 表示该来源已知覆盖该维度；targets 中 status=verified 的 URL 为已人工核验并已入库的抓取入口，status=pending 表示待确认入口或需登录/JS 渲染。"
@@ -347,6 +347,56 @@
         "frequency": "daily",
         "priority": 2
       }
+    },
+    {
+      "id": "ecloud",
+      "name": "移动云",
+      "providerId": "ecloud",
+      "homepage": "https://ecloud.10086.cn",
+      "region": "CN",
+      "coverage": {
+        "gpu-baremetal": true,
+        "gpu-hourly": true,
+        "text-api": true,
+        "media-api": false,
+        "plans": false
+      },
+      "targets": [
+        {
+          "dimension": "gpu-baremetal",
+          "url": "https://ecloud.10086.cn/op-help-center/doc/article/26081",
+          "format": "html",
+          "status": "verified",
+          "notes": "「智算资源-共享集群」计费说明（2026-09-21 更新）：整租 4×910B2 78000 元/月（呼和浩特、哈尔滨），以及 0.5/0.25 卡 vNPU/vGPU 包月（武汉 910B2 9750/4875、A800 10400/5200；哈尔滨 910B2 9750/4875）。已入库 8 条；包年价（910B2 936000 元/年、V100 4 卡 225792 元/年）不折算月租，未入库。"
+        },
+        {
+          "dimension": "gpu-hourly",
+          "url": "https://ecloud.10086.cn/op-help-center/doc/article/26081",
+          "format": "html",
+          "status": "verified",
+          "notes": "同页按量计费按实例「元/个/小时」计价，按 8 卡整机折算单卡：910B 324/8=40.5、A800 345/8=43.125、A100 28、V100 19.6、910B4-32G 30 元/卡时；已入库 5 条（覆盖 10 个资源池）。"
+        },
+        {
+          "dimension": "text-api",
+          "url": "https://ecloud.10086.cn/op-help-center/doc/article/91592",
+          "format": "html",
+          "status": "verified",
+          "notes": "MoMA「Token按量计费-自营模型」（2026-11-13 更新）：29 个对话/推理模型，元/百万 tokens；夜间/闲时与上下文分档取基准档，缓存命中价按需记录。BGE 向量/排序 3 款与视频、语音计价未纳入文本维度。已入库 29 条。"
+        },
+        {
+          "dimension": "media-api",
+          "url": "https://ecloud.10086.cn/op-help-center/doc/article/91592",
+          "format": "html",
+          "status": "pending",
+          "notes": "同页含 MiniMax-H3 视频输出 0.5 元/秒（768P）、视频输入 0.5 元/秒、图片输入 0.2 元/张，待按 mediaModels 归一化后接入。"
+        }
+      ],
+      "crawl": {
+        "enabled": true,
+        "frequency": "daily",
+        "priority": 2
+      },
+      "notes": "帮助中心为前端渲染 SPA，静态抓取只能拿到页面壳，需无头浏览器读取表格；已于 2026-11-26 完成两轮人工核验（算力租赁 10 项、token 29 项）。"
     },
     {
       "id": "jiyun",

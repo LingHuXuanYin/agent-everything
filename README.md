@@ -101,6 +101,7 @@ dist/
 | 阿里云 aliyun.com | ✅ | 待确认 | 待确认 | 1 | 已接入 |
 | 腾讯云 cloud.tencent.com | ✅ | ✅ | — | 1 / 1 | 已接入 |
 | 百度智能云 cloud.baidu.com | 待确认 | ✅ | 待确认 | 4 | 已接入 |
+| 移动云 ecloud.10086.cn | ✅ | ✅ | ✅ | 8 / 5 / 29 | 已接入 |
 | 极云科技 | — | — | — | — | 极智算运营方，数据并入 jygpu |
 
 裸金属取整机月租，卡时按单卡归一化，token 价按 1M tokens 记。`sources.json` 中 `status=verified` 表示该入口已人工核验并能解析出价格，`pending` 表示入口待确认或需登录 / 前端渲染。
