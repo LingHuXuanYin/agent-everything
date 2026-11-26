@@ -43,11 +43,15 @@ function RangeChart({
   currency,
   rates,
 }: {
-  rows: Array<{ gpu: string; min: number; max: number; count: number }>;
+  rows: Array<{ key: string; gpu: string; vram: number; min: number; max: number; count: number }>;
   currency: Currency;
   rates: { CNY: number };
 }) {
   const domain = Math.max(...rows.map((row) => row.max), 1) * 1.05;
+
+  if (!rows.length) {
+    return <p className="chart-empty">当前筛选条件下没有卡时报价。</p>;
+  }
 
   return (
     <div className="range-chart">
@@ -56,9 +60,9 @@ function RangeChart({
         <span>{currency} / 卡时</span>
       </div>
       {rows.map((row) => (
-        <div className="range-row" key={row.gpu}>
+        <div className="range-row" key={row.key}>
           <span className="range-label">
-            {row.gpu}
+            {row.gpu} {row.vram}G
             <small>{row.count} 个报价</small>
           </span>
           <span className="range-track" aria-hidden="true">
@@ -89,29 +93,78 @@ function RangeChart({
 export function Charts({ data }: { data: Snapshot }) {
   const rates = data.meta.rates;
   const [currency, setCurrency] = useState<Currency>('CNY');
+  const [gpuFilter, setGpuFilter] = useState('all');
+  const [providerFilter, setProviderFilter] = useState('all');
   const money = (usdValue: number) => formatMoney(usdValue, 'USD', currency, rates);
   const providers = useMemo(
     () => new Map(data.providers.map((provider) => [provider.id, provider])),
     [data.providers],
   );
 
-  const ranges = useMemo(() => {
-    const groups = new Map<string, { min: number; max: number; count: number }>();
+  const gpuOptions = useMemo(() => {
+    const map = new Map<string, string>();
     for (const row of data.gpuHourly) {
+      map.set(`${row.gpu}|${row.vramGb}`, `${row.gpu} ${row.vramGb}G`);
+    }
+    return [...map.entries()].sort((a, b) => a[1].localeCompare(b[1], 'en'));
+  }, [data.gpuHourly]);
+
+  const providerOptions = useMemo(() => {
+    const ids = [...new Set(data.gpuHourly.map((row) => row.providerId))];
+    return ids
+      .map((id) => ({ id, name: providers.get(id)?.short ?? id }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'));
+  }, [data.gpuHourly, providers]);
+
+  const baremetalOnly = useMemo(() => {
+    const key = (gpu: string) =>
+      gpu
+        .toLowerCase()
+        .replace(/nvidia|huawei|amd|华为|昇腾|ascend/g, '')
+        .replace(/sxm|pcie|nvlink|nvl|sff/g, '')
+        .replace(/\b\d+\s*g\b/g, '')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    const hourly = new Set(data.gpuHourly.map((row) => key(row.gpu)));
+    const names = new Map<string, string>();
+    for (const row of data.gpuBaremetal) {
+      if (hourly.has(key(row.gpu))) continue;
+      names.set(key(row.gpu), `${row.gpu.replace(/^NVIDIA\s+|^华为\s+/i, '')} ${row.vramGb}G`);
+    }
+    return [...names.values()];
+  }, [data.gpuBaremetal, data.gpuHourly]);
+
+  const { aggregates, hourlyCount } = useMemo(() => {
+    const groups = new Map<
+      string,
+      { key: string; gpu: string; vram: number; min: number; max: number; count: number }
+    >();
+    let count = 0;
+    for (const row of data.gpuHourly) {
+      if (providerFilter !== 'all' && row.providerId !== providerFilter) continue;
+      const key = `${row.gpu}|${row.vramGb}`;
+      if (gpuFilter !== 'all' && key !== gpuFilter) continue;
       const price = toUsd(row.price, row.currency, rates);
-      const group = groups.get(row.gpu);
+      const group = groups.get(key);
+      count += 1;
       if (!group) {
-        groups.set(row.gpu, { min: price, max: price, count: 1 });
+        groups.set(key, {
+          key,
+          gpu: row.gpu,
+          vram: row.vramGb,
+          min: price,
+          max: price,
+          count: 1,
+        });
       } else {
         group.min = Math.min(group.min, price);
         group.max = Math.max(group.max, price);
         group.count += 1;
       }
     }
-    return [...groups.entries()]
-      .map(([gpu, group]) => ({ gpu, ...group }))
-      .sort((a, b) => a.min - b.min);
-  }, [data.gpuHourly, rates]);
+    const list = [...groups.values()].sort((a, b) => a.min - b.min);
+    return { aggregates: list, hourlyCount: count };
+  }, [data.gpuHourly, rates, providerFilter, gpuFilter]);
 
   const textItems = useMemo<BarItem[]>(
     () =>
@@ -182,9 +235,44 @@ export function Charts({ data }: { data: Snapshot }) {
           <article className="chart-card chart-wide">
             <header className="chart-head">
               <h3>GPU 卡时价格带</h3>
-              <span>{currency} / 卡时 · 各平台最低与最高</span>
+              <div className="chart-filters">
+                <label className="select-field">
+                  <span className="sr-only">筛选 GPU 型号</span>
+                  <select value={gpuFilter} onChange={(event) => setGpuFilter(event.target.value)}>
+                    <option value="all">全部型号</option>
+                    {gpuOptions.map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="select-field">
+                  <span className="sr-only">筛选服务平台</span>
+                  <select
+                    value={providerFilter}
+                    onChange={(event) => setProviderFilter(event.target.value)}
+                  >
+                    <option value="all">全部服务平台</option>
+                    {providerOptions.map((provider) => (
+                      <option key={provider.id} value={provider.id}>
+                        {provider.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
             </header>
-            <RangeChart rows={ranges} currency={currency} rates={rates} />
+            <RangeChart rows={aggregates} currency={currency} rates={rates} />
+            <p className="chart-note">
+              共 {aggregates.length} 个型号、{hourlyCount} 条卡时报价
+              {gpuFilter === 'all' && providerFilter === 'all' && baremetalOnly.length
+                ? `；另有 ${baremetalOnly.length} 个型号只有整机月租、暂无卡时报价（如 ${baremetalOnly
+                    .slice(0, 3)
+                    .join('、')}），详见「报价单 · GPU 裸金属」`
+                : ''}
+              。
+            </p>
           </article>
 
           <article className="chart-card">
