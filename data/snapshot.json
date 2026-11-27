@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "0.1.0",
-    "snapshotAt": "2026-11-26T11:55:30+08:00",
+    "snapshotAt": "2026-11-27T08:04:29+08:00",
     "rates": {
       "USD": 1,
       "CNY": 7.2
@@ -1483,7 +1483,7 @@
       "gpu": "RTX 5090",
       "gpuCount": 1,
       "vramGb": 32,
-      "price": 3.25,
+      "price": 3.78,
       "currency": "CNY",
       "region": "国内节点",
       "minTerm": "按秒计费",
